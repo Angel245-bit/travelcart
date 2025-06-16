@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { supabase } from "../lib/supabaseClient";
 
 export default function Contacto() {
   const [formData, setFormData] = useState({ nombre: "", email: "", mensaje: "" });
@@ -14,20 +15,17 @@ export default function Contacto() {
     setEnviando(true);
     setExito(null);
 
-    // Simular envío - acá podés conectar con Supabase o tu backend
-    try {
-      // Ejemplo: await supabase.from("contactos").insert([formData]);
+    const { data, error } = await supabase
+      .from("contactos")
+      .insert([{ nombre: formData.nombre, email: formData.email, mensaje: formData.mensaje }]);
 
-      // Simulación de espera
-      await new Promise((res) => setTimeout(res, 1500));
-
+    if (error) {
+      setExito(false);
+    } else {
       setExito(true);
       setFormData({ nombre: "", email: "", mensaje: "" });
-    } catch {
-      setExito(false);
-    } finally {
-      setEnviando(false);
     }
+    setEnviando(false);
   };
 
   return (

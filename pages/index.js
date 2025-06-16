@@ -1,83 +1,52 @@
-import { useState, useEffect } from "react";
+import Head from "next/head";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import Card from "@/components/Card";
+import Contacto from "@/components/Contacto";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-export default function Home() {
-  const [tours, setTours] = useState([]);
-  const [cart, setCart] = useState([]);
-
-  useEffect(() => {
-    fetchTours();
-
-    // Cargar carrito desde localStorage al iniciar
-    const savedCart = JSON.parse(localStorage.getItem("travelcart") || "[]");
-    setCart(savedCart);
-  }, []);
-
-  async function fetchTours() {
-    const { data, error } = await supabase.from("tours").select("*");
-    if (error) {
-      console.error("Error al cargar tours:", error);
-    } else {
-      setTours(data);
-    }
-  }
-
-  function addToCart(tour) {
-    const newCart = [...cart, tour];
-    setCart(newCart);
-    localStorage.setItem("travelcart", JSON.stringify(newCart));
-  }
-
-  return (
-    <div>
-      <header style={{ padding: "1rem", backgroundColor: "#0070f3", color: "white" }}>
-        <h1>TravelCart - Paquetes turísticos</h1>
-      </header>
-
-      <main style={{ padding: "1rem" }}>
-        <h2>Paquetes disponibles</h2>
-        <div className="tours-container">
-          {tours.map((tour) => (
-            <div key={tour.id} className="tour-card">
-              <img
-                src={tour.image_url}
-                alt={tour.name}
-                style={{ width: "100%", height: "150px", objectFit: "cover" }}
-              />
-              <h3>{tour.name}</h3>
-              <p>{tour.description}</p>
-              <p><b>Precio:</b> ${tour.price}</p>
-              <button onClick={() => addToCart(tour)}>Agregar al carrito</button>
-            </div>
-          ))}
-        </div>
-      </main>
-
-      <Footer />
-    </div>
+export async function getServerSideProps() {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   );
+
+  const { data: tours } = await supabase.from("tours").select("*");
+
+  return { props: { tours } };
 }
 
-function Footer() {
+export default function Home({ tours }) {
   return (
-    <footer style={{ backgroundColor: "#0070f3", color: "white", padding: "1rem", textAlign: "center", marginTop: "2rem" }}>
-      <p>Contacto: Nuñez Angel | Tel: 387553618 | Email: nunezangel849@gmail.com | Salta Capital, Argentina</p>
-      <p>
-        Seguinos en:&nbsp;
-        <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" style={{ color: "white", marginRight: "1rem" }}>
-          Facebook
-        </a>
-        <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" style={{ color: "white", marginRight: "1rem" }}>
-          Instagram
-        </a>
-        <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" style={{ color: "white" }}>
-          Twitter
-        </a>
-      </p>
-    </footer>
+    <>
+      <Head>
+        <title>TravelCart</title>
+      </Head>
+
+      <Navbar />
+
+      <section className="hero bg-cover bg-center text-white h-[80vh] flex items-center justify-center" style={{ backgroundImage: "url('/hero.jpg')" }}>
+        <div className="bg-black bg-opacity-60 p-8 rounded-xl">
+          <h1 className="text-4xl md:text-6xl font-bold">Descubrí el mundo con TravelCart</h1>
+          <p className="mt-4 text-lg">Reservá tu próximo destino ahora mismo</p>
+        </div>
+      </section>
+
+      <section id="tours" className="py-12 px-6 bg-gray-50">
+        <h2 className="text-3xl font-bold text-center mb-8">Nuestros destinos</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {tours.map((tour) => (
+            <Card key={tour.id} tour={tour} />
+          ))}
+        </div>
+      </section>
+
+      <section id="contacto" className="py-12 px-6 bg-white">
+        <h2 className="text-3xl font-bold text-center mb-8">Completá el formulario</h2>
+        <Contacto />
+      </section>
+
+      <Footer />
+    </>
   );
 }
