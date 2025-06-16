@@ -1,0 +1,62 @@
+/* globals.css */
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f7f9fc;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Animación simple para imágenes */
+img {
+  transition: transform 0.3s ease;
+  border-radius: 8px;
+}
+
+img:hover {
+  transform: scale(1.05);
+}
+
+/* Botones */
+button {
+  background-color: #0070f3;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #005bb5;
+  cursor: pointer;
+}
+
+/* Contenedor flexible para los tours */
+.tours-container {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tour-card {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  width: 280px;
+  background: white;
+  box-shadow: 0 4px 6px rgb(0 0 0 / 0.1);
+  border-radius: 8px;
+  transition: box-shadow 0.3s ease;
+}
+
+.tour-card:hover {
+  box-shadow: 0 6px 12px rgb(0 0 0 / 0.15);
+}
